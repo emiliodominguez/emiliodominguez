@@ -3,8 +3,14 @@
 		"name": "Emilio Domínguez",
 		"subtitle": "Argentina",
 		"links": [
-			{ "label": "npm", "url": "https://www.npmjs.com/~emidominguez" },
-			{ "label": "X", "url": "https://x.com/emi__dominguez" }
+			{
+				"label": "npm",
+				"url": "https://www.npmjs.com/~emidominguez"
+			},
+			{
+				"label": "X",
+				"url": "https://x.com/emi__dominguez"
+			}
 		]
 	},
 	"sections": [
@@ -96,24 +102,6 @@
 					"url": "https://github.com/emiliodominguez/sass-dep",
 					"description": "Maps Sass and SCSS dependencies, finds circular imports and enforces architecture rules.",
 					"meta": "Rust"
-				},
-				{
-					"name": "ghostwright",
-					"url": "https://github.com/emiliodominguez/ghostwright",
-					"description": "Self-hosted browser testing on Playwright: no-code steps or custom JS, screenshot diffs, traces.",
-					"meta": "TypeScript"
-				},
-				{
-					"name": "yolotest",
-					"url": "https://github.com/emiliodominguez/yolotest",
-					"description": "Record what you click in a browser and replay it as a test, with screenshots at every step.",
-					"meta": "TypeScript"
-				},
-				{
-					"name": "annoying-teammate-reviewer",
-					"url": "https://github.com/emiliodominguez/annoying-teammate-reviewer",
-					"description": "Code review CLI with configurable personalities. Runs on Ollama, Claude, OpenAI or Gemini.",
-					"meta": "TypeScript"
 				}
 			]
 		},
@@ -131,26 +119,10 @@
 					"commandKind": "url"
 				},
 				{
-					"name": "worklet atrium",
-					"url": "https://emiliodominguez.github.io/worklet-studio/atrium.html",
-					"description": "A 3D concrete atrium with reflections and sunlight, painted as a CSS background.",
-					"meta": "TypeScript",
-					"command": "emiliodominguez.github.io/worklet-studio",
-					"commandKind": "url"
-				},
-				{
 					"name": "agents-camp",
 					"url": "https://github.com/emiliodominguez/agents-camp",
 					"description": "Pixel-art world for chatting with AI companions running on Claude Code or Codex.",
 					"meta": "TypeScript"
-				},
-				{
-					"name": "expense-splitter",
-					"url": "https://expense-splitter-inky.vercel.app",
-					"description": "Split group expenses, see who owes whom and track settled payments. English and Spanish.",
-					"meta": "TypeScript",
-					"command": "expense-splitter-inky.vercel.app",
-					"commandKind": "url"
 				}
 			]
 		}
