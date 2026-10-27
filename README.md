@@ -2,7 +2,7 @@
 
 <picture><source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.svg"><img alt="Emilio Domínguez" src="assets/banner-light.svg" width="100%"></picture>
 
-[npm](https://www.npmjs.com/~emidominguez) · [X](https://x.com/emi__dominguez)
+<a href="https://www.linkedin.com/in/emilio-dominguez-bais/"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/links/linkedin-dark.svg"><img alt="LinkedIn" src="assets/links/linkedin-light.svg"></picture></a>&nbsp;&nbsp;&nbsp;<a href="https://x.com/emi__dominguez"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/links/x-dark.svg"><img alt="X" src="assets/links/x-light.svg"></picture></a>&nbsp;&nbsp;&nbsp;<a href="https://www.npmjs.com/~emidominguez"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/links/npm-dark.svg"><img alt="npm" src="assets/links/npm-light.svg"></picture></a>
 
 ### npm packages
 

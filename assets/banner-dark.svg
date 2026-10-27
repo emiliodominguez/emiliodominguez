@@ -7,7 +7,7 @@
 			<stop offset="0.7" stop-color="#fff" stop-opacity="1"/>
 		</linearGradient>
 		<filter id="blur-banner" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
-		<mask id="mask-banner"><rect width="1200" height="240" fill="url(#fade)"/><g fill="#000" filter="url(#blur-banner)"><rect x="44.0" y="78.0" width="488.0" height="64.0" rx="32"/><rect x="46.0" y="146.0" width="118.5" height="28.0" rx="14"/></g></mask>
+		<mask id="mask-banner"><rect width="1200" height="240" fill="url(#fade)"/><g fill="#000" filter="url(#blur-banner)"><rect x="44.0" y="78.0" width="488.0" height="64.0" rx="32"/><rect x="46.0" y="144.0" width="154.5" height="32.0" rx="16"/></g></mask>
 	</defs>
 	<g clip-path="url(#clip-banner)">
 		<rect width="1200" height="240" fill="#151b23"/>
@@ -155,5 +155,15 @@
 		</g>
 	</g>
 	<text x="56" y="128" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="52" font-weight="600" letter-spacing="-1" fill="#f0f6fc">Emilio Domínguez</text>
-	<text x="58" y="166" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="20" fill="#9198a1">Argentina</text>
+	<g transform="translate(58 150)">
+		<clipPath id="flag"><rect width="26" height="18" rx="3"/></clipPath>
+		<g clip-path="url(#flag)">
+			<rect width="26" height="18" fill="#74acdf"/>
+			<rect y="6" width="26" height="6" fill="#fff"/>
+			<path d="M15.20 9.00L16.30 9.00M15.03 9.84L16.05 10.26M14.56 10.56L15.33 11.33M13.84 11.03L14.26 12.05M13.00 11.20L13.00 12.30M12.16 11.03L11.74 12.05M11.44 10.56L10.67 11.33M10.97 9.84L9.95 10.26M10.80 9.00L9.70 9.00M10.97 8.16L9.95 7.74M11.44 7.44L10.67 6.67M12.16 6.97L11.74 5.95M13.00 6.80L13.00 5.70M13.84 6.97L14.26 5.95M14.56 7.44L15.33 6.67M15.03 8.16L16.05 7.74" stroke="#f6b40e" stroke-width="0.8"/>
+			<circle cx="13" cy="9" r="1.9" fill="#f6b40e"/>
+		</g>
+		<rect x="0.25" y="0.25" width="25.5" height="17.5" rx="2.75" fill="none" stroke="#656c76" stroke-opacity="0.45" stroke-width="0.5"/>
+	</g>
+	<text x="94" y="166" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="20" fill="#9198a1">Argentina</text>
 </svg>

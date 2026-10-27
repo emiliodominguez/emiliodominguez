@@ -19,6 +19,22 @@ const THEMES = {
 	dark: { surface: "#151b23", text: "#f0f6fc", muted: "#9198a1", faint: "#656c76", lightness: 64, saturation: 75, opacity: 0.5 },
 };
 
+// Brand marks from Simple Icons (CC0), drawn on a 24x24 grid.
+const ICONS = {
+	linkedin: {
+		color: { light: "#0a66c2", dark: "#3d8fe0" },
+		path: "M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z",
+	},
+	x: {
+		color: { light: "#1f2328", dark: "#f0f6fc" },
+		path: "M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z",
+	},
+	npm: {
+		color: { light: "#cb3837", dark: "#e5534b" },
+		path: "M1.763 0C.786 0 0 .786 0 1.763v20.474C0 23.214.786 24 1.763 24h20.474c.977 0 1.763-.786 1.763-1.763V1.763C24 .786 23.214 0 22.237 0zM5.13 5.323l13.837.019-.009 13.836h-3.464l.01-10.382h-3.456L12.04 19.17H5.113z",
+	},
+};
+
 const LANGUAGE_COLORS = { TypeScript: "#3178c6", JavaScript: "#f1e05a", Rust: "#dea584" };
 
 /**
@@ -247,7 +263,7 @@ function renderBanner(profile, hues, theme) {
 		.join("");
 	const halo = halos("banner", [
 		[44, 78, profile.name.length * 29 + 24, 64],
-		[46, 146, profile.subtitle.length * 10.5 + 24, 28],
+		[46, 144, profile.subtitle.length * 10.5 + 60, 32],
 	]);
 
 	return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escape(profile.name)}">
@@ -270,7 +286,64 @@ function renderBanner(profile, hues, theme) {
 		</g>
 	</g>
 	<text x="56" y="128" font-family="${SANS}" font-size="52" font-weight="600" letter-spacing="-1" fill="${theme.text}">${escape(profile.name)}</text>
-	<text x="58" y="166" font-family="${SANS}" font-size="20" fill="${theme.muted}">${escape(profile.subtitle)}</text>
+	${renderFlag(58, 150, theme)}
+	<text x="94" y="166" font-family="${SANS}" font-size="20" fill="${theme.muted}">${escape(profile.subtitle)}</text>
+</svg>
+`;
+}
+
+/**
+ * Renders the Argentine flag (sky blue, white, sky blue, Sun of May) at 26x18.
+ * @param {number} x
+ * @param {number} y
+ * @param {typeof THEMES.light} theme
+ * @returns {string} SVG markup
+ */
+function renderFlag(x, y, theme) {
+	const rays = Array.from({ length: 16 }, function toRay(_, index) {
+		const a = (index / 16) * Math.PI * 2;
+		return `M${(13 + Math.cos(a) * 2.2).toFixed(2)} ${(9 + Math.sin(a) * 2.2).toFixed(2)}L${(13 + Math.cos(a) * 3.3).toFixed(2)} ${(9 + Math.sin(a) * 3.3).toFixed(2)}`;
+	}).join("");
+	return `<g transform="translate(${x} ${y})">
+		<clipPath id="flag"><rect width="26" height="18" rx="3"/></clipPath>
+		<g clip-path="url(#flag)">
+			<rect width="26" height="18" fill="#74acdf"/>
+			<rect y="6" width="26" height="6" fill="#fff"/>
+			<path d="${rays}" stroke="#f6b40e" stroke-width="0.8"/>
+			<circle cx="13" cy="9" r="1.9" fill="#f6b40e"/>
+		</g>
+		<rect x="0.25" y="0.25" width="25.5" height="17.5" rx="2.75" fill="none" stroke="${theme.faint}" stroke-opacity="0.45" stroke-width="0.5"/>
+	</g>`;
+}
+
+/**
+ * Estimates the rendered width of a label in the system sans at 15px, weight 500.
+ * @param {string} text
+ * @returns {number}
+ */
+function labelWidth(text) {
+	let total = 0;
+	for (const char of text) {
+		if ("mwMW".includes(char)) total += 13.2;
+		else if ("ilIjtf".includes(char)) total += 4.8;
+		else if (char === char.toUpperCase()) total += 10;
+		else total += 8.6;
+	}
+	return total;
+}
+
+/**
+ * Renders a profile link: brand icon plus label, on a transparent background.
+ * @param {{ label: string, icon: keyof ICONS }} link
+ * @param {"light" | "dark"} mode
+ * @returns {string} SVG markup
+ */
+function renderLink(link, mode) {
+	const icon = ICONS[link.icon];
+	const width = Math.ceil(28 + labelWidth(link.label) + 2);
+	return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="24" viewBox="0 0 ${width} 24" role="img" aria-label="${escape(link.label)}">
+	<g transform="translate(2 3) scale(0.75)"><path d="${icon.path}" fill="${icon.color[mode]}"/></g>
+	<text x="28" y="17" font-family="${SANS}" font-size="15" font-weight="500" fill="${THEMES[mode].text}">${escape(link.label)}</text>
 </svg>
 `;
 }
@@ -283,7 +356,7 @@ function renderBanner(profile, hues, theme) {
  * @returns {string}
  */
 function picture(base, alt, width) {
-	return `<picture><source media="(prefers-color-scheme: dark)" srcset="${base}-dark.svg"><img alt="${escape(alt)}" src="${base}-light.svg" width="${width}"></picture>`;
+	return `<picture><source media="(prefers-color-scheme: dark)" srcset="${base}-dark.svg"><img alt="${escape(alt)}" src="${base}-light.svg"${width ? ` width="${width}"` : ""}></picture>`;
 }
 
 /**
@@ -295,9 +368,9 @@ function renderReadme(data) {
 	const { profile, sections } = data;
 	const links = profile.links
 		.map(function toLink(link) {
-			return `[${link.label}](${link.url})`;
+			return `<a href="${link.url}">${picture(`assets/links/${link.icon}`, link.label, "")}</a>`;
 		})
-		.join(" · ");
+		.join("&nbsp;&nbsp;&nbsp;");
 	const body = sections.map(function toSection(section) {
 		const cards = section.items.map(function toCard(item) {
 			return `<a href="${item.url}">${picture(`assets/cards/${slug(item.name)}`, `${item.name}: ${item.description}`, "49%")}</a>`;
@@ -334,9 +407,13 @@ function main() {
 		return section.hue;
 	});
 	mkdirSync(CARDS_DIR, { recursive: true });
+	mkdirSync(join(ROOT, "assets", "links"), { recursive: true });
 
 	for (const [mode, theme] of Object.entries(THEMES)) {
 		writeFileSync(join(ROOT, "assets", `banner-${mode}.svg`), renderBanner(data.profile, hues, theme));
+		for (const link of data.profile.links) {
+			writeFileSync(join(ROOT, "assets", "links", `${link.icon}-${mode}.svg`), renderLink(link, mode));
+		}
 		for (const section of data.sections) {
 			for (const item of section.items) {
 				writeFileSync(join(CARDS_DIR, `${slug(item.name)}-${mode}.svg`), renderCard(item, section.hue, theme));

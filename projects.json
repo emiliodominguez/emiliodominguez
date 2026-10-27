@@ -4,12 +4,19 @@
 		"subtitle": "Argentina",
 		"links": [
 			{
-				"label": "npm",
-				"url": "https://www.npmjs.com/~emidominguez"
+				"label": "LinkedIn",
+				"icon": "linkedin",
+				"url": "https://www.linkedin.com/in/emilio-dominguez-bais/"
 			},
 			{
 				"label": "X",
+				"icon": "x",
 				"url": "https://x.com/emi__dominguez"
+			},
+			{
+				"label": "npm",
+				"icon": "npm",
+				"url": "https://www.npmjs.com/~emidominguez"
 			}
 		]
 	},
