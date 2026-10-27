@@ -1,0 +1,158 @@
+{
+	"profile": {
+		"name": "Emilio Domínguez",
+		"subtitle": "Argentina",
+		"links": [
+			{ "label": "npm", "url": "https://www.npmjs.com/~emidominguez" },
+			{ "label": "X", "url": "https://x.com/emi__dominguez" }
+		]
+	},
+	"sections": [
+		{
+			"id": "packages",
+			"title": "npm packages",
+			"hue": 214,
+			"note": "Also co-maintained on npm: [@berenjena/react-dev-panel](https://github.com/Berenjenas/react-dev-panel) and [cococh](https://github.com/dallegos/cococh).",
+			"items": [
+				{
+					"name": "lumenql",
+					"url": "https://github.com/emiliodominguez/lumenql",
+					"description": "Typed GraphQL client with caching, deduplication, retries, subscriptions and React hooks.",
+					"meta": "TypeScript",
+					"command": "npm i lumenql"
+				},
+				{
+					"name": "rsc-state",
+					"url": "https://github.com/emiliodominguez/rsc-state",
+					"description": "Type-safe state for React Server Components: derived state, async mutations, storage adapters.",
+					"meta": "TypeScript",
+					"command": "npm i rsc-state"
+				},
+				{
+					"name": "tinkit",
+					"url": "https://github.com/emiliodominguez/tinkit",
+					"description": "Strictly typed TypeScript utilities. Zero dependencies, tree-shakeable, property-tested.",
+					"meta": "TypeScript",
+					"command": "npm i tinkit"
+				},
+				{
+					"name": "pixelguard",
+					"url": "https://github.com/emiliodominguez/pixelguard",
+					"description": "Visual regression testing for Storybook: Playwright screenshots, baseline diffs, HTML reports.",
+					"meta": "Rust",
+					"command": "npx pixelguard init"
+				},
+				{
+					"name": "repo-song",
+					"url": "https://github.com/emiliodominguez/repo-song",
+					"description": "Turns a git repository's history into a lofi track played on sampled instruments.",
+					"meta": "TypeScript",
+					"command": "npx repo-song"
+				},
+				{
+					"name": "worklet-studio",
+					"url": "https://github.com/emiliodominguez/worklet-studio",
+					"description": "13 CSS Paint Worklet packages: aurora, nebula, caustics, cursors and more. No WebGL.",
+					"meta": "TypeScript",
+					"command": "npm i aurora-worklet"
+				}
+			]
+		},
+		{
+			"id": "skills",
+			"title": "Agent skills",
+			"hue": 152,
+			"items": [
+				{
+					"name": "flow-skills",
+					"url": "https://github.com/emiliodominguez/flow-skills",
+					"description": "Skills for the whole development loop: explore, plan, build, review and ship.",
+					"meta": "37 skills",
+					"command": "npx skills add emiliodominguez/flow-skills"
+				},
+				{
+					"name": "test-skills",
+					"url": "https://github.com/emiliodominguez/test-skills",
+					"description": "Skills for writing tests that can fail, from unit and e2e to visual checks and LLM evals.",
+					"meta": "17 skills",
+					"command": "npx skills add emiliodominguez/test-skills"
+				},
+				{
+					"name": "threejs-skills",
+					"url": "https://github.com/emiliodominguez/threejs-skills",
+					"description": "Skills for three.js, React Three Fiber and web 3D: render, fix, optimize and animate models.",
+					"meta": "28 skills",
+					"command": "npx skills@1 add emiliodominguez/threejs-skills"
+				}
+			]
+		},
+		{
+			"id": "tools",
+			"title": "CLIs and tools",
+			"hue": 272,
+			"items": [
+				{
+					"name": "sass-dep",
+					"url": "https://github.com/emiliodominguez/sass-dep",
+					"description": "Maps Sass and SCSS dependencies, finds circular imports and enforces architecture rules.",
+					"meta": "Rust"
+				},
+				{
+					"name": "ghostwright",
+					"url": "https://github.com/emiliodominguez/ghostwright",
+					"description": "Self-hosted browser testing on Playwright: no-code steps or custom JS, screenshot diffs, traces.",
+					"meta": "TypeScript"
+				},
+				{
+					"name": "yolotest",
+					"url": "https://github.com/emiliodominguez/yolotest",
+					"description": "Record what you click in a browser and replay it as a test, with screenshots at every step.",
+					"meta": "TypeScript"
+				},
+				{
+					"name": "annoying-teammate-reviewer",
+					"url": "https://github.com/emiliodominguez/annoying-teammate-reviewer",
+					"description": "Code review CLI with configurable personalities. Runs on Ollama, Claude, OpenAI or Gemini.",
+					"meta": "TypeScript"
+				}
+			]
+		},
+		{
+			"id": "browser",
+			"title": "In the browser",
+			"hue": 24,
+			"items": [
+				{
+					"name": "web-audio-api-synth",
+					"url": "https://emiliodominguez.github.io/web-audio-api-synth/",
+					"description": "Polyphonic synth with six presets, MIDI input, touch controls, reverb and delay.",
+					"meta": "TypeScript",
+					"command": "emiliodominguez.github.io/web-audio-api-synth",
+					"commandKind": "url"
+				},
+				{
+					"name": "worklet atrium",
+					"url": "https://emiliodominguez.github.io/worklet-studio/atrium.html",
+					"description": "A 3D concrete atrium with reflections and sunlight, painted as a CSS background.",
+					"meta": "TypeScript",
+					"command": "emiliodominguez.github.io/worklet-studio",
+					"commandKind": "url"
+				},
+				{
+					"name": "agents-camp",
+					"url": "https://github.com/emiliodominguez/agents-camp",
+					"description": "Pixel-art world for chatting with AI companions running on Claude Code or Codex.",
+					"meta": "TypeScript"
+				},
+				{
+					"name": "expense-splitter",
+					"url": "https://expense-splitter-inky.vercel.app",
+					"description": "Split group expenses, see who owes whom and track settled payments. English and Spanish.",
+					"meta": "TypeScript",
+					"command": "expense-splitter-inky.vercel.app",
+					"commandKind": "url"
+				}
+			]
+		}
+	]
+}
