@@ -18,7 +18,7 @@
 			"id": "packages",
 			"title": "npm packages",
 			"hue": 214,
-			"note": "Also co-maintained on npm: [@berenjena/react-dev-panel](https://github.com/Berenjenas/react-dev-panel) and [cococh](https://github.com/dallegos/cococh).",
+			"note": "Also co-maintained on npm: [@berenjena/react-dev-panel](https://github.com/Berenjenas/react-dev-panel).",
 			"items": [
 				{
 					"name": "lumenql",

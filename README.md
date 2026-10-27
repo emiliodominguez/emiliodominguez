@@ -13,7 +13,7 @@
 <a href="https://github.com/emiliodominguez/repo-song"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/cards/repo-song-dark.svg"><img alt="repo-song: Turns a git repository's history into a lofi track played on sampled instruments." src="assets/cards/repo-song-light.svg" width="49%"></picture></a>
 <a href="https://github.com/emiliodominguez/worklet-studio"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/cards/worklet-studio-dark.svg"><img alt="worklet-studio: 13 CSS Paint Worklet packages: aurora, nebula, caustics, cursors and more. No WebGL." src="assets/cards/worklet-studio-light.svg" width="49%"></picture></a>
 
-Also co-maintained on npm: [@berenjena/react-dev-panel](https://github.com/Berenjenas/react-dev-panel) and [cococh](https://github.com/dallegos/cococh).
+Also co-maintained on npm: [@berenjena/react-dev-panel](https://github.com/Berenjenas/react-dev-panel).
 
 ### Agent skills
 
