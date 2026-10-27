@@ -317,33 +317,16 @@ function renderFlag(x, y, theme) {
 }
 
 /**
- * Estimates the rendered width of a label in the system sans at 15px, weight 500.
- * @param {string} text
- * @returns {number}
- */
-function labelWidth(text) {
-	let total = 0;
-	for (const char of text) {
-		if ("mwMW".includes(char)) total += 13.2;
-		else if ("ilIjtf".includes(char)) total += 4.8;
-		else if (char === char.toUpperCase()) total += 10;
-		else total += 8.6;
-	}
-	return total;
-}
-
-/**
- * Renders a profile link: brand icon plus label, on a transparent background.
+ * Renders a profile link as a bare brand icon.
  * @param {{ label: string, icon: keyof ICONS }} link
  * @param {"light" | "dark"} mode
  * @returns {string} SVG markup
  */
 function renderLink(link, mode) {
 	const icon = ICONS[link.icon];
-	const width = Math.ceil(28 + labelWidth(link.label) + 2);
-	return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="24" viewBox="0 0 ${width} 24" role="img" aria-label="${escape(link.label)}">
-	<g transform="translate(2 3) scale(0.75)"><path d="${icon.path}" fill="${icon.color[mode]}"/></g>
-	<text x="28" y="17" font-family="${SANS}" font-size="15" font-weight="500" fill="${THEMES[mode].text}">${escape(link.label)}</text>
+	return `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-label="${escape(link.label)}">
+	<title>${escape(link.label)}</title>
+	<path d="${icon.path}" fill="${icon.color[mode]}"/>
 </svg>
 `;
 }
@@ -356,7 +339,7 @@ function renderLink(link, mode) {
  * @returns {string}
  */
 function picture(base, alt, width) {
-	return `<picture><source media="(prefers-color-scheme: dark)" srcset="${base}-dark.svg"><img alt="${escape(alt)}" src="${base}-light.svg"${width ? ` width="${width}"` : ""}></picture>`;
+	return `<picture><source media="(prefers-color-scheme: dark)" srcset="${base}-dark.svg"><img alt="${escape(alt)}" src="${base}-light.svg" width="${width}"></picture>`;
 }
 
 /**
@@ -368,7 +351,7 @@ function renderReadme(data) {
 	const { profile, sections } = data;
 	const links = profile.links
 		.map(function toLink(link) {
-			return `<a href="${link.url}">${picture(`assets/links/${link.icon}`, link.label, "")}</a>`;
+			return `<a href="${link.url}" title="${escape(link.label)}">${picture(`assets/links/${link.icon}`, link.label, "24")}</a>`;
 		})
 		.join("&nbsp;&nbsp;&nbsp;");
 	const body = sections.map(function toSection(section) {
