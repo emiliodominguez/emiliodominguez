@@ -97,7 +97,7 @@ function wrap(text, maxChars) {
 }
 
 /**
- * Traces streamlines through a seeded flow field and returns them as SVG path data.
+ * Traces streamlines through a seeded flow field.
  * @param {object} options
  * @param {string} options.seed - Text the field is derived from
  * @param {number} options.width
@@ -106,7 +106,7 @@ function wrap(text, maxChars) {
  * @param {number} options.lines - Number of streamlines
  * @param {number} options.steps - Integration steps per line
  * @param {number} options.stepLength - Distance per step
- * @returns {string[]}
+ * @returns {Array<Array<[number, number]>>} Polylines as point lists
  */
 function flowField({ seed, width, height, fromX, lines, steps, stepLength }) {
 	const rand = random(hash(seed));
@@ -132,21 +132,91 @@ function flowField({ seed, width, height, fromX, lines, steps, stepLength }) {
 		return drift + sum * Math.PI;
 	}
 
-	const paths = [];
+	const polylines = [];
 	for (let i = 0; i < lines; i++) {
 		let x = fromX + rand() * (width - fromX);
 		let y = rand() * height;
-		const points = [`M${x.toFixed(1)} ${y.toFixed(1)}`];
+		const points = [[x, y]];
 		for (let step = 0; step < steps; step++) {
 			const a = angle(x, y);
 			x += Math.cos(a) * stepLength;
 			y += Math.sin(a) * stepLength;
 			if (x < -20 || x > width + 20 || y < -20 || y > height + 20) break;
-			points.push(`L${x.toFixed(1)} ${y.toFixed(1)}`);
+			points.push([x, y]);
 		}
-		if (points.length > 4) paths.push(points.join(""));
+		if (points.length > 4) polylines.push(points);
 	}
-	return paths;
+	return polylines;
+}
+
+/**
+ * Hermite smoothstep between two edges.
+ * @param {number} from
+ * @param {number} to
+ * @param {number} value
+ * @returns {number} 0 at or below `from`, 1 at or above `to`
+ */
+function smoothstep(from, to, value) {
+	const t = Math.min(1, Math.max(0, (value - from) / (to - from)));
+	return t * t * (3 - 2 * t);
+}
+
+/**
+ * Builds the pattern's visibility function: a left-to-right fade that also clears soft halos around text.
+ * Computed here instead of with SVG masks or filters, which some Markdown renderers ignore.
+ * @param {number} fadeFrom - x where lines start to appear
+ * @param {number} fadeTo - x where lines reach full strength
+ * @param {Array<[number, number, number, number]>} boxes - Text bounds as [x, y, width, height]
+ * @returns {(x: number, y: number) => number} Visibility in [0, 1]
+ */
+function visibility(fadeFrom, fadeTo, boxes) {
+	return function visibleAt(x, y) {
+		let value = smoothstep(fadeFrom, fadeTo, x);
+		for (const [bx, by, bw, bh] of boxes) {
+			const dx = Math.max(bx - x, 0, x - (bx + bw));
+			const dy = Math.max(by - y, 0, y - (by + bh));
+			value *= smoothstep(0, 12, Math.hypot(dx, dy));
+		}
+		return value;
+	};
+}
+
+/**
+ * Splits polylines into runs of similar visibility and renders each run with a matching stroke opacity.
+ * @param {Array<Array<[number, number]>>} polylines
+ * @param {(x: number, y: number) => number} visibleAt
+ * @param {number} opacity - Opacity at full visibility
+ * @returns {string} SVG path elements
+ */
+function strokes(polylines, visibleAt, opacity) {
+	const levels = 10;
+	const runs = [];
+	for (const points of polylines) {
+		let run = null;
+		for (const point of points) {
+			const level = Math.round(visibleAt(...point) * levels);
+			if (run?.level === level) {
+				run.points.push(point);
+				continue;
+			}
+			if (run) {
+				run.points.push(point);
+				if (run.level > 0) runs.push(run);
+			}
+			run = { level, points: [point] };
+		}
+		if (run && run.level > 0 && run.points.length > 1) runs.push(run);
+	}
+	return runs
+		.map(function toPath({ level, points }) {
+			const d = points
+				.map(function toCommand([x, y], index) {
+					return `${index === 0 ? "M" : "L"}${x.toFixed(1)} ${y.toFixed(1)}`;
+				})
+				.join("");
+			return `<path d="${d}" stroke-opacity="${((level / levels) * opacity).toFixed(2)}"/>`;
+		})
+		.join("\n\t\t\t");
 }
 
 /**
@@ -157,24 +227,6 @@ function flowField({ seed, width, height, fromX, lines, steps, stepLength }) {
  */
 function accent(hue, theme) {
 	return `hsl(${hue} ${theme.saturation}% ${theme.lightness}%)`;
-}
-
-/**
- * Renders mask content that hides the pattern behind text, with blurred edges so lines fade out around it.
- * @param {string} id - Unique suffix for the filter id
- * @param {Array<[number, number, number, number]>} boxes - Text bounds as [x, y, width, height]
- * @returns {{ filter: string, shapes: string }}
- */
-function halos(id, boxes) {
-	const rects = boxes
-		.map(function toRect([x, y, w, h]) {
-			return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" rx="${h / 2}"/>`;
-		})
-		.join("");
-	return {
-		filter: `<filter id="blur-${id}" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>`,
-		shapes: `<g fill="#000" filter="url(#blur-${id})">${rects}</g>`,
-	};
 }
 
 /**
@@ -189,10 +241,10 @@ function renderCard(item, hue, theme) {
 	const id = item.name.replace(/\W+/g, "-");
 	const color = accent(hue, theme);
 	const dot = LANGUAGE_COLORS[item.meta] ?? color;
-	const paths = flowField({ seed: item.name, width, height, fromX: width * 0.35, lines: 34, steps: 90, stepLength: 2.6 });
+	const polylines = flowField({ seed: item.name, width, height, fromX: width * 0.35, lines: 34, steps: 90, stepLength: 2.6 });
 	const lines = wrap(item.description, 52).slice(0, 2);
 	const commandWidth = item.command ? (item.command.length + 2) * 7.6 : 0;
-	const halo = halos(id, [
+	const visibleAt = visibility(width * 0.35, width, [
 		[padding - 8, padding + 2, item.name.length * 10.5 + 16, 26],
 		[width - padding - item.meta.length * 6.6 - 26, padding + 1, item.meta.length * 6.6 + 34, 20],
 		...lines.map(function toBox(line, index) {
@@ -221,19 +273,11 @@ function renderCard(item, hue, theme) {
 	return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escape(`${item.name}: ${item.description}`)}">
 	<defs>
 		<clipPath id="clip-${id}"><rect width="${width}" height="${height}" rx="${radius}"/></clipPath>
-		<linearGradient id="fade-${id}" x1="0" x2="1" y1="0" y2="0">
-			<stop offset="0.35" stop-color="#fff" stop-opacity="0"/>
-			<stop offset="1" stop-color="#fff" stop-opacity="1"/>
-		</linearGradient>
-		${halo.filter}
-		<mask id="mask-${id}"><rect width="${width}" height="${height}" fill="url(#fade-${id})"/>${halo.shapes}</mask>
 	</defs>
 	<g clip-path="url(#clip-${id})">
 		<rect width="${width}" height="${height}" fill="${theme.surface}"/>
-		<g mask="url(#mask-${id})" fill="none" stroke="${color}" stroke-width="1" stroke-opacity="${theme.opacity}" stroke-linecap="round">
-			${paths.map(function toPath(d) {
-				return `<path d="${d}"/>`;
-			}).join("\n\t\t\t")}
+		<g fill="none" stroke="${color}" stroke-width="1" stroke-linecap="round">
+			${strokes(polylines, visibleAt, theme.opacity)}
 		</g>
 	</g>
 	<text x="${padding}" y="${padding + 20}" font-family="${SANS}" font-size="18" font-weight="600" fill="${theme.text}">${escape(item.name)}</text>
@@ -255,13 +299,13 @@ function renderCard(item, hue, theme) {
  */
 function renderBanner(profile, hues, theme) {
 	const { width, height, radius } = BANNER;
-	const paths = flowField({ seed: profile.name, width, height, fromX: width * 0.2, lines: 140, steps: 220, stepLength: 3 });
+	const polylines = flowField({ seed: profile.name, width, height, fromX: width * 0.2, lines: 140, steps: 220, stepLength: 3 });
 	const stops = hues
 		.map(function toStop(hue, index) {
 			return `<stop offset="${(0.3 + (index / (hues.length - 1)) * 0.7).toFixed(2)}" stop-color="${accent(hue, theme)}"/>`;
 		})
 		.join("");
-	const halo = halos("banner", [
+	const visibleAt = visibility(width * 0.22, width * 0.7, [
 		[44, 78, profile.name.length * 29 + 24, 64],
 		[46, 144, profile.subtitle.length * 10.5 + 60, 32],
 	]);
@@ -270,19 +314,11 @@ function renderBanner(profile, hues, theme) {
 	<defs>
 		<clipPath id="clip-banner"><rect width="${width}" height="${height}" rx="${radius}"/></clipPath>
 		<linearGradient id="hues" gradientUnits="userSpaceOnUse" x1="0" x2="${width}" y1="0" y2="0">${stops}</linearGradient>
-		<linearGradient id="fade" x1="0" x2="1" y1="0" y2="0">
-			<stop offset="0.22" stop-color="#fff" stop-opacity="0"/>
-			<stop offset="0.7" stop-color="#fff" stop-opacity="1"/>
-		</linearGradient>
-		${halo.filter}
-		<mask id="mask-banner"><rect width="${width}" height="${height}" fill="url(#fade)"/>${halo.shapes}</mask>
 	</defs>
 	<g clip-path="url(#clip-banner)">
 		<rect width="${width}" height="${height}" fill="${theme.surface}"/>
-		<g mask="url(#mask-banner)" fill="none" stroke="url(#hues)" stroke-width="1.1" stroke-opacity="${theme.opacity + 0.15}" stroke-linecap="round">
-			${paths.map(function toPath(d) {
-				return `<path d="${d}"/>`;
-			}).join("\n\t\t\t")}
+		<g fill="none" stroke="url(#hues)" stroke-width="1.1" stroke-linecap="round">
+			${strokes(polylines, visibleAt, theme.opacity + 0.15)}
 		</g>
 	</g>
 	<text x="56" y="128" font-family="${SANS}" font-size="52" font-weight="600" letter-spacing="-1" fill="${theme.text}">${escape(profile.name)}</text>
@@ -305,14 +341,11 @@ function renderFlag(x, y, theme) {
 		return `M${(13 + Math.cos(a) * 2.2).toFixed(2)} ${(9 + Math.sin(a) * 2.2).toFixed(2)}L${(13 + Math.cos(a) * 3.3).toFixed(2)} ${(9 + Math.sin(a) * 3.3).toFixed(2)}`;
 	}).join("");
 	return `<g transform="translate(${x} ${y})">
-		<clipPath id="flag"><rect width="26" height="18" rx="3"/></clipPath>
-		<g clip-path="url(#flag)">
-			<rect width="26" height="18" fill="#74acdf"/>
-			<rect y="6" width="26" height="6" fill="#fff"/>
-			<path d="${rays}" stroke="#f6b40e" stroke-width="0.8"/>
-			<circle cx="13" cy="9" r="1.9" fill="#f6b40e"/>
-		</g>
-		<rect x="0.25" y="0.25" width="25.5" height="17.5" rx="2.75" fill="none" stroke="${theme.faint}" stroke-opacity="0.45" stroke-width="0.5"/>
+		<rect width="26" height="18" rx="2" fill="#74acdf"/>
+		<rect y="6" width="26" height="6" fill="#fff"/>
+		<path d="${rays}" stroke="#f6b40e" stroke-width="0.8"/>
+		<circle cx="13" cy="9" r="1.9" fill="#f6b40e"/>
+		<rect x="0.25" y="0.25" width="25.5" height="17.5" rx="1.75" fill="none" stroke="${theme.faint}" stroke-opacity="0.45" stroke-width="0.5"/>
 	</g>`;
 }
 
